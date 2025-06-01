@@ -1,11 +1,16 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import Hero from "@/components/Hero";
+import LanguageSelector from "@/components/LanguageSelector";
+import LessonGrid from "@/components/LessonGrid";
+import ProgressTracker from "@/components/ProgressTracker";
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4 color-black text-black">Добро пожаловать!</h1>
-        <p className="text-xl text-gray-600">тут будет отображаться ваш проект</p>
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
+      <Hero />
+      <div className="max-w-6xl mx-auto px-4 pb-16 space-y-12">
+        <LanguageSelector />
+        <ProgressTracker />
+        <LessonGrid />
       </div>
     </div>
   );
