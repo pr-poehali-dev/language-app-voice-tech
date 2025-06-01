@@ -1,7 +1,10 @@
 import { Button } from "@/components/ui/button";
 import Icon from "@/components/ui/icon";
+import { useNavigate } from "react-router-dom";
 
 const Hero = () => {
+  const navigate = useNavigate();
+
   return (
     <section className="relative overflow-hidden bg-gradient-to-r from-purple-600 via-purple-700 to-blue-600 text-white">
       <div className="absolute inset-0 bg-black/20"></div>
@@ -29,6 +32,7 @@ const Hero = () => {
             <Button
               size="lg"
               className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 text-lg"
+              onClick={() => navigate("/lesson/1")}
             >
               <Icon name="Play" size={20} className="mr-2" />
               Начать обучение
@@ -37,6 +41,7 @@ const Hero = () => {
               variant="outline"
               size="lg"
               className="border-white/20 text-white hover:bg-white/10 px-8 py-3 text-lg"
+              onClick={() => navigate("/lesson/1")}
             >
               <Icon name="Mic" size={20} className="mr-2" />
               Попробовать речь

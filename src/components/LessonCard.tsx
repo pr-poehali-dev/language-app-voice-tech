@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import Icon from "@/components/ui/icon";
+import { useNavigate } from "react-router-dom";
 
 interface Lesson {
   id: number;
@@ -43,6 +44,12 @@ const getTypeColor = (type: string) => {
 };
 
 const LessonCard = ({ lesson }: LessonCardProps) => {
+  const navigate = useNavigate();
+
+  const handleLessonClick = () => {
+    navigate(`/lesson/${lesson.id}`);
+  };
+
   return (
     <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 relative overflow-hidden">
       {lesson.completed && (
@@ -99,6 +106,7 @@ const LessonCard = ({ lesson }: LessonCardProps) => {
         <Button
           className="w-full"
           variant={lesson.completed ? "outline" : "default"}
+          onClick={handleLessonClick}
         >
           {lesson.completed ? (
             <>
