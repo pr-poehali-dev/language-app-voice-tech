@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from "react";
-import { Button } from "@/components/ui/button";
+import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import Icon from "@/components/ui/icon";
@@ -9,13 +9,15 @@ interface PronunciationPracticeProps {
   word: string;
   translation: string;
   targetAccuracy?: number;
+  onComplete?: (accuracy: number) => void;
 }
 
-const PronunciationPractice: React.FC<PronunciationPracticeProps> = ({
+const PronunciationPractice = ({
   word,
   translation,
   targetAccuracy = 80,
-}) => {
+  onComplete,
+}: PronunciationPracticeProps) => {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState("");
   const [accuracy, setAccuracy] = useState(0);
@@ -31,17 +33,25 @@ const PronunciationPractice: React.FC<PronunciationPracticeProps> = ({
       recognition.lang = "en-US";
 
       recognition.onresult = (event: any) => {
-        const result = event.results[0][0].transcript.toLowerCase();
+        const result = event.results[0][0].transcript.toLowerCase().trim();
         setTranscript(result);
-
-        // Простая оценка точности произношения
-        const similarity = calculateSimilarity(word.toLowerCase(), result);
-        setAccuracy(similarity);
-
-        if (similarity >= targetAccuracy) {
-          setIsSuccess(true);
-        }
+        setIsListening(false);
         setAttempts((prev) => prev + 1);
+
+        const calculatedAccuracy = calculateSimilarity(
+          word.toLowerCase(),
+          result,
+        );
+        setAccuracy(calculatedAccuracy);
+
+        if (calculatedAccuracy >= targetAccuracy) {
+          setIsSuccess(true);
+          onComplete?.(calculatedAccuracy);
+        }
+      };
+
+      recognition.onerror = () => {
+        setIsListening(false);
       };
 
       recognition.onend = () => {
@@ -56,7 +66,7 @@ const PronunciationPractice: React.FC<PronunciationPracticeProps> = ({
         recognitionRef.current.stop();
       }
     };
-  }, [word, targetAccuracy]);
+  }, [word, targetAccuracy, onComplete]);
 
   const calculateSimilarity = (target: string, spoken: string): number => {
     if (target === spoken) return 100;

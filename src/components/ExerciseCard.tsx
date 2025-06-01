@@ -1,10 +1,11 @@
-import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import Icon from "@/components/ui/icon";
 
 interface Exercise {
-  type: "translation" | "audio";
+  id: string;
+  type: "audio" | "translation";
   question: string;
   options: string[];
   correct: number;
@@ -13,37 +14,34 @@ interface Exercise {
 
 interface ExerciseCardProps {
   exercise: Exercise;
-  onAnswer: (isCorrect: boolean) => void;
+  onComplete: (correct: boolean) => void;
 }
 
-const ExerciseCard: React.FC<ExerciseCardProps> = ({ exercise, onAnswer }) => {
+const ExerciseCard = ({ exercise, onComplete }: ExerciseCardProps) => {
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
-  const [isAnswered, setIsAnswered] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
+  const [isAnswered, setIsAnswered] = useState(false);
+
+  const handleOptionSelect = (index: number) => {
+    if (isAnswered) return;
+
+    setSelectedOption(index);
+    setShowFeedback(true);
+    setIsAnswered(true);
+
+    const isCorrect = index === exercise.correct;
+
+    // Отправляем результат после небольшой задержки
+    setTimeout(() => {
+      onComplete(isCorrect);
+    }, 1500);
+  };
 
   const playAudio = () => {
     if (exercise.audio) {
-      const utterance = new SpeechSynthesisUtterance(exercise.audio);
-      utterance.lang = "en-US";
-      speechSynthesis.speak(utterance);
+      const audio = new Audio(exercise.audio);
+      audio.play().catch(console.error);
     }
-  };
-
-  const handleOptionSelect = (optionIndex: number) => {
-    if (isAnswered) return;
-
-    setSelectedOption(optionIndex);
-    setIsAnswered(true);
-    setShowFeedback(true);
-
-    const isCorrect = optionIndex === exercise.correct;
-
-    setTimeout(() => {
-      onAnswer(isCorrect);
-      setSelectedOption(null);
-      setIsAnswered(false);
-      setShowFeedback(false);
-    }, 2000);
   };
 
   const getOptionStyle = (index: number) => {
